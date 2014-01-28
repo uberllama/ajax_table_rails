@@ -18,7 +18,7 @@ gem 'ajax_table_rails'
 
 ### Include javascript assets
 
-Add the following to your `app/assets/javascripts/application.js:
+Add the following to your `app/assets/javascripts/application.js`:
 
 ````
 //= require ajaxtable
@@ -45,7 +45,7 @@ In your view (using Users as an example):
 </table>
 ````
 
-In this example, the table will automatically initialize, and the Name and Email columns will be sortable. Record count and poagination will be inserted into the `tfoot`.
+In this example, the table will automatically initialize, and the Name and Email columns will be sortable. Record count and pagination will be inserted into the `tfoot`.
 
 **Required attributes**
 
@@ -57,12 +57,12 @@ In this example, the table will automatically initialize, and the Name and Email
 
 | Attribute | Description |
 | --------- | ----------- |
-| table class | "ajax-table". Required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings. |
+| table class | "ajax-table" required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings (see below). |
 | th data-sort-column | Matches database column you'd like to sort against. |
 
-#### Customize your table
+### Customize your table
 
-AjaxTableRails is built with Bootstrap and FontAwesome in mind. You may want to override the classes used for pagination and sorting, as well as some other bits and bops. Here's what a full customization looks like (default values shown):
+AjaxTableRails is built with Bootstrap and FontAwesome in mind, as well as some other defaults that may make you unhappy. You may want to override the classes used for pagination and sorting, as well as some other bits and bops. Here's what a full customization looks like (default values shown):
 
 ````
 $(function() {
@@ -85,7 +85,9 @@ $(function() {
 
 ### Build your controller
 
-Use the `set_ajax_table` method to set your sorting criteria, and setup the query in a JSON response block. `set_ajax_table` populates `@order` and `@page`, which you can use directly in your query. I use Kaminari for pagination, but you can use whatever you like.
+Call `set_ajax_table` in a `before_action` to set your sorting criteria, then setup the query in a JSON response block.
+
+`set_ajax_table` populates `@order` and `@page`, which you can use directly in your query. I use Kaminari for pagination, but you can use whatever you like.
 
 ````
 before_action -> {
@@ -106,7 +108,7 @@ end
 
 | Attribute | Description |
 | --------- | ----------- |
-| columns | which columns are sortable, so that your customers can't specify crazy sorts willy nilly |
+| columns | Whitelist of sortable columns |
 | default_column | Your default sort column (if unspecified, defaults to `id`) |
 | default_direction | Your default sort direction (if unspecified, deaults to `asc`) |
 
@@ -133,6 +135,7 @@ ul.pagination {
 ## Love it? Hate it?
 
 @uberllama
+
 I also write random [tech articles](http://blog.littleblimp.com).
 
 ## Copyright
@@ -144,3 +147,4 @@ Copyright &copy; 2014 Yuval Kordov. See MIT-LICENSE for further details.
 * Windowed pagination
 * Result filtering
 * Show default sort
+* Allow customization via data attributes
