@@ -47,12 +47,16 @@ In your view (using Users as an example):
 
 In this example, the table will automatically initialize, and the Name and Email columns will be sortable. Record count and poagination will be inserted into the `tfoot`.
 
-| Required attributes |
-|---------------------|
+**Required attributes**
+
+| Attribute | Description |
+| --------- | ----------- |
 | table data-source | JSON path for your table data |
 
-| Optional attributes |
-| ------------------- |
+**Optional attributes**
+
+| Attribute | Description |
+| --------- | ----------- |
 | table class | "ajax-table". Required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings. |
 | th data-sort-column | Matches database column you'd like to sort against. |
 
@@ -98,8 +102,10 @@ def index
 end
 ````
 
-| Optional attributes |
-| ------------------- |
+**Optional attributes**
+
+| Attribute | Description |
+| --------- | ----------- |
 | columns | which columns are sortable, so that your customers can't specify crazy sorts willy nilly |
 | default_column | Your default sort column (if unspecified, defaults to `id`) |
 | default_direction | Your default sort direction (if unspecified, deaults to `asc`) |
