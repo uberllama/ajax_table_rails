@@ -112,6 +112,23 @@ end
 | default_column | Your default sort column (if unspecified, defaults to `id`) |
 | default_direction | Your default sort direction (if unspecified, deaults to `asc`) |
 
+### Build your JSON
+
+You need to render JSON data that contains both your records in a `rows` node, and pagination details in a `pagination` node.
+
+````
+json.rows(@users) do |user|
+  json.extract!(user, :name, :email)
+  json.homes customer.homes.collect(&:name).to_sentence
+  json.action link_to("View", user_path(user), class: "btn")
+end
+json.pagination do
+  json.per_page User.default_per_page
+  json.count @users.size
+  json.total_count User.count
+end
+````
+
 ### Make it shiny
 
 Use whatever CSS you like. Here's a rudimentary example of some things you may want to do.
