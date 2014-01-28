@@ -114,13 +114,12 @@ end
 
 ### Build your JSON
 
-You need to render JSON data that contains both your records in a `rows` node, and pagination details in a `pagination` node.
+You need to render two JSON nodes: `rows` for your records, and `pagination` for your pagination details.
 
 ````
 json.rows(@users) do |user|
   json.extract!(user, :name, :email)
-  json.homes customer.homes.collect(&:name).to_sentence
-  json.action link_to("View", user_path(user), class: "btn")
+  json.action link_to("Edit", edit_user_path(user), class: "btn")
 end
 json.pagination do
   json.per_page User.default_per_page
