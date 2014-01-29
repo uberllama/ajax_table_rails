@@ -1,8 +1,10 @@
 var ajaxTable = (function($) {
 
-  // On document ready, ajaxify all tables with the `ajax-table` class.
+  // On document ready:
+  // ajaxify all tables with the `ajax-table` class
+  // bind search/reset via forms with the `ajax-table-search` class
   //
-  // If you want to use custom settings, forego the `ajax-table` class and call init manually:
+  // If you want to use custom settings for your tables, forego the `ajax-table` class and call init manually:
   // $(function() {
   //   ajaxTable.init($('#some-table'), {
   //     cssClasses: { pagination: 'some-class' },
@@ -16,6 +18,19 @@ var ajaxTable = (function($) {
     $('table.ajax-table').each(function() {
       init($(this));
     });
+
+    $('body').on('submit', 'form.ajax-table-search', function(e) {
+      var $form = $(this);
+      search($('#'+$form.data('ajax-table-id')), $form.find('input.ajax-table-search-input').val());
+      e.preventDefault();
+    });
+
+    $('body').on('click', '.ajax-table-reset', function(e) {
+      var $form = $(this).closest('form.ajax-table-search');
+      $form.find('input.ajax-table-search-input').val('');
+      resetTable($('#'+$form.data('ajax-table-id')));
+      e.preventDefault();
+    });
   });
   
   /* public */
@@ -26,6 +41,20 @@ var ajaxTable = (function($) {
     $table.data('page', 1);
     loadTable($table);
     initSorting($table);
+  };
+
+  // Filter table records against submitted keywords
+  var search = function($table, val) {
+    $table.data('page', 1);
+    $table.data('search', val);
+    loadTable($table);
+  };
+
+  // Reset table to an unpaginated and unfiltered state
+  var resetTable = function($table) {
+    $table.data('page', 1);
+    $table.removeData('search');
+    loadTable($table);
   };
   
   /* private */
@@ -45,6 +74,7 @@ var ajaxTable = (function($) {
     // @note Querystring param keys match up with those used by ajax_table.rb
     params: {
       page: 'page',
+      search: 'search',
       sortColumn: 'sort',
       sortDirection: 'direction'
     },
@@ -56,12 +86,13 @@ var ajaxTable = (function($) {
     }
   };
 
-  // Load and render table, based on current sort and page
+  // Load and render table, based on current page, sort, and search filter
   var loadTable = function($table) {
     params = {};
-    params[config.params.page] = $table.data('page');
-    params[config.params.sortColumn] = $table.data('sort-column');
+    params[config.params.page]          = $table.data('page');
+    params[config.params.sortColumn]    = $table.data('sort-column');
     params[config.params.sortDirection] = $table.data('sort-direction');
+    params[config.params.search]        = $table.data('search');
     
     var request = $.ajax({
       url: $table.data('source'),
@@ -80,14 +111,14 @@ var ajaxTable = (function($) {
   // @example `<th data-sort-column="email">Email</th>`
   var initSorting = function($table) {
     $table.find('th[data-sort-column]').on('click', function() {
-      // Set direction based on prior and clicked sort column
+      // Reset pagination
+      $table.data('page', 1);
+      // Set direction based on prior and just-clicked sort column
       var sortColumn = $(this).data('sort-column');
       var direction = ($table.data('sort-column') == sortColumn && $table.data('sort-direction') == 'asc') ? 'desc' : 'asc';
       $table.data('sort-direction', direction);
       // Set new sort column
       $table.data('sort-column', sortColumn);
-      // Always reset page to 1 when re-sorting
-      $table.data('page', 1);
       // Remove and re-insert sort icon
       $table.find('th i.' + config.cssClasses.sort).remove();
       var $i = $('<i/>', { class: config.cssClasses.sort + ' ' + (direction == 'asc' ? config.cssClasses.sortAsc : config.cssClasses.sortDesc) });
@@ -121,7 +152,7 @@ var ajaxTable = (function($) {
         $td.append($count);
         $count.html(config.text.count.replace('{count}', pagination.count).replace('{total_count}', pagination.total_count));
       }
-      // Pagination controls
+      // Build pagination controls
       var pageCount = Math.ceil(pagination.total_count / pagination.per_page);
       var currentPage = $table.data('page');
       var $ul = $('<ul/>', { class: config.cssClasses.pagination });
@@ -140,7 +171,7 @@ var ajaxTable = (function($) {
         var nextPage = currentPage+1;
         $ul.append('<li><a href="#" data-page=' + nextPage + '>' + config.text.nextPage + '</a></li>');
       }
-      // Bind the pagination controls
+      // Bind pagination controls
       $table.find('ul.' + config.cssClasses.pagination.split(' ').join('.') + ' a').on('click', function(e) {
         $table.data('page', $(this).data('page'));
         loadTable($table);
@@ -150,7 +181,9 @@ var ajaxTable = (function($) {
   };
 
   return {
-    init: init
+    init: init,
+    search: search,
+    resetTable: resetTable
   }
 
 })(jQuery);

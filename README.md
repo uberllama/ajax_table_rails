@@ -24,12 +24,14 @@ Add the following to your `app/assets/javascripts/application.js`:
 //= require ajaxtable
 ````
 
-### Build your table
+### Basic usage
+
+#### Build your table
 
 In your view (using Users as an example):
 
 ````
-<table class="ajax-table" data-source="<%= users_path(format: :json)%>">
+<table class="ajax-table" data-source="<%= users_path(format: :json)%>" id="users-table">
   <thead>
     <tr>
       <th data-sort-column="name">Name</th>
@@ -60,30 +62,7 @@ In this example, the table will automatically initialize, and the Name and Email
 | table class | "ajax-table" required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings (see below). |
 | th data-sort-column | Matches database column you'd like to sort against. |
 
-### Customize your table
-
-AjaxTableRails is built with Bootstrap and FontAwesome in mind, as well as some other defaults that may make you unhappy. You may want to override the classes used for pagination and sorting, as well as some other bits and bops. Here's what a full customization looks like (default values shown):
-
-````
-$(function() {
-  ajaxTable.init($('#some-table'), {
-    cssClasses: {
-      count: 'at-count',          // "Showing xx records out of xx" span
-      pagination: 'pagination',   // Pagination ul, defaults to match Bootstrap
-      sort: 'at-sort',            // Sort icon base class
-      sortAsc: 'fa fa-sort-up',   // Sort icon ascending indicator, defaults to use FontAwesome
-      sortDesc: 'fa fa-sort-down' // Sort icon descending indicator, defaults to use FontAwesome
-    },
-    text: {
-      count: 'Showing {count} records out of {total_count}', // Pass null to skip rendering of this element
-      nextPage: '&raquo;',
-      previousPage: '&laquo;'
-    }
-  });
-});
-````
-
-### Build your controller
+#### Build your controller
 
 Call `set_ajax_table` in a `before_action` to set your sorting criteria, then setup the query in a JSON response block.
 
@@ -112,7 +91,7 @@ end
 | default_column | Your default sort column (if unspecified, defaults to `id`) |
 | default_direction | Your default sort direction (if unspecified, deaults to `asc`) |
 
-### Build your JSON
+#### Build your JSON
 
 You need to render two JSON nodes: `rows` for your records, and `pagination` for your pagination details.
 
@@ -128,7 +107,44 @@ json.pagination do
 end
 ````
 
-### Make it shiny
+### Advanced usage
+
+#### Filtering results
+
+**Under construction.** Adding the following anywhere on your page will currently work.
+
+````
+<form class="ajax-table-search" data-ajax-table-id="users-table">
+  <input class="ajax-table-search-input">
+  <a href="#" class="ajax-table-reset">x</a>
+  <input type="submit" value="Search">
+</form>
+````
+
+#### Customize your table
+
+AjaxTableRails is built with Bootstrap and FontAwesome in mind, as well as some other defaults that may make you unhappy. You may want to override the classes used for pagination and sorting, as well as some other bits and bops. Here's what a full customization looks like (default values shown):
+
+````
+$(function() {
+  ajaxTable.init($('#some-table'), {
+    cssClasses: {
+      count: 'at-count',          // "Showing xx records out of xx" span
+      pagination: 'pagination',   // Pagination ul, defaults to match Bootstrap
+      sort: 'at-sort',            // Sort icon base class
+      sortAsc: 'fa fa-sort-up',   // Sort icon ascending indicator, defaults to use FontAwesome
+      sortDesc: 'fa fa-sort-down' // Sort icon descending indicator, defaults to use FontAwesome
+    },
+    text: {
+      count: 'Showing {count} records out of {total_count}', // Pass null to skip rendering of this element
+      nextPage: '&raquo;',
+      previousPage: '&laquo;'
+    }
+  });
+});
+````
+
+#### Make it shiny
 
 Use whatever CSS you like. Here's a rudimentary example of some things you may want to do.
 
@@ -160,7 +176,7 @@ Copyright &copy; 2014 Yuval Kordov. See MIT-LICENSE for further details.
 
 ## TODO
 
-* Windowed pagination
 * Result filtering
+* Windowed pagination
 * Show default sort
 * Allow customization via data attributes
