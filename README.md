@@ -1,6 +1,6 @@
 # AjaxTableRails
 
-AjaxTableRails is a super simple, super lightweight library if all you want is fast, JSON-loaded tables with ajax sorting and pagination. It provides just enough to get you going and doesn't do anything fancy. It is also still very much in early development, so there are probably bugs.
+AjaxTableRails is a super simple, super lightweight library if all you want is fast, JSON-loaded tables with ajax sorting, pagination, and filtering. It provides just enough to get you going and doesn't do anything fancy. It is also still very much in early development, so there are probably bugs.
 
 ## Usage
 
@@ -57,7 +57,7 @@ You can automagically initialize your tables by giving them a class of `ajax-tab
 
 | Attribute | Description |
 | --------- | ----------- |
-| table class | "ajax-table" required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings (see below). |
+| table class | `ajax-table` required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings (see below). |
 | table id | Required only if you want to use automagic filtering (see below) |
 | th data-sort-column | Matches database column you'd like to sort against. |
 
@@ -65,7 +65,7 @@ You can automagically initialize your tables by giving them a class of `ajax-tab
 
 Call `set_ajax_table` in a `before_action` to set your sorting criteria, then setup the query in a JSON response block.
 
-`set_ajax_table` populates `@order` and `@page`, which you can use directly in your query. I use Kaminari for pagination, but you can use whatever you like.
+`set_ajax_table` populates `@order`, `@page`, and `@search`, which you can use directly in your query. I use [kaminari](https://github.com/amatsuda/kaminari) for pagination and either a custom scope or [pg_search](https://github.com/Casecommons/pg_search) for searching, but you can use whatever you like.
 
 ````
 before_action -> {
@@ -77,6 +77,8 @@ def index
     format.html {}
     format.json {
       @users = User.order(@order).page(@page)
+      @users = @users.search(@search) if @search.present?
+      @total_count = @users.except(:order, :limit, :offset).count
     }
   end
 end
@@ -102,7 +104,7 @@ end
 json.pagination do
   json.per_page User.default_per_page
   json.count @users.size
-  json.total_count User.count
+  json.total_count @total_count
 end
 ````
 
@@ -188,7 +190,6 @@ Copyright &copy; 2014 Yuval Kordov. See MIT-LICENSE for further details.
 
 ## TODO
 
-* Result filtering
 * Windowed pagination
 * Show default sort
 * Allow customization via data attributes
