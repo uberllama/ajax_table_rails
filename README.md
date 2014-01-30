@@ -28,7 +28,7 @@ Add the following to your `app/assets/javascripts/application.js`:
 
 #### Build your table
 
-In your view (using Users as an example):
+You can automagically initialize your tables by giving them a class of `ajax-table`. Records are inserted into the `tbody` and record count and pagination are inserted into the `tfoot`.
 
 ````
 <table class="ajax-table" data-source="<%= users_path(format: :json)%>" id="users-table">
@@ -47,8 +47,6 @@ In your view (using Users as an example):
 </table>
 ````
 
-In this example, the table will automatically initialize, and the Name and Email columns will be sortable. Record count and pagination will be inserted into the `tfoot`.
-
 **Required attributes**
 
 | Attribute | Description |
@@ -60,6 +58,7 @@ In this example, the table will automatically initialize, and the Name and Email
 | Attribute | Description |
 | --------- | ----------- |
 | table class | "ajax-table" required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings (see below). |
+| table id | Required only if you want to use automagic filtering (see below) |
 | th data-sort-column | Matches database column you'd like to sort against. |
 
 #### Build your controller
@@ -111,7 +110,13 @@ end
 
 #### Filtering results
 
-**Under construction.** Adding the following anywhere on your page will currently work.
+Just as you can auto-init your tables by giving them a class of `ajax-table`, you can enable automagic filtering and resetting of your table contents by creating:
+
+* a form with class of `ajax-table-search` and data attribute of `ajax-table-id` that refers to your ajax table
+* an input field with class of `ajax-table-search-input`
+* a reset link with class `ajax-table-reset`
+
+Example:
 
 ````
 <form class="ajax-table-search" data-ajax-table-id="users-table">
@@ -119,6 +124,13 @@ end
   <a href="#" class="ajax-table-reset">x</a>
   <input type="submit" value="Search">
 </form>
+````
+
+The `search()` and `resetTable()` methods are public, so you're free to forego the simple automagic implementation and realize your wildest interface fantasies.
+
+````
+ajaxTable.search($('#some-table'), 'puppies');
+ajaxTable.resetTable($('#some-table'));
 ````
 
 #### Customize your table
