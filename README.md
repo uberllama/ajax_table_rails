@@ -68,7 +68,7 @@ You can optionally specify a form that will be bound to your table for simple ta
 </form>
 ````
 
-The `ajax-table-search-input` and `ajax-table-reset` class names are required. ALternatively, you can call search and reset manually (see Advanced Usage, below).
+The `ajax-table-search-input` and `ajax-table-reset` class names are required. Alternatively, you can call search and reset manually (see Advanced Usage, below).
 
 #### Init that!
 
