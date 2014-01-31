@@ -26,12 +26,12 @@ Add the following to your `app/assets/javascripts/application.js`:
 
 ### Basic usage
 
-#### Build your table
+#### Table structure
 
-You can automagically initialize your tables by giving them a class of `ajax-table`. Records are inserted into the `tbody` and record count and pagination are inserted into the `tfoot`.
+Your table should look like this:
 
 ````
-<table class="ajax-table" data-source="<%= users_path(format: :json)%>" id="users-table">
+<table data-source="<%= users_path(format: :json)%>" id="users-table">
   <thead>
     <tr>
       <th data-sort-column="name">Name</th>
@@ -47,19 +47,36 @@ You can automagically initialize your tables by giving them a class of `ajax-tab
 </table>
 ````
 
-**Required attributes**
+Records are inserted into the `tbody` and record count and pagination are inserted into the `tfoot`.
+
+**Data Attributes**
 
 | Attribute | Description |
 | --------- | ----------- |
 | table data-source | JSON path for your table data |
-
-**Optional attributes**
-
-| Attribute | Description |
-| --------- | ----------- |
-| table class | `ajax-table` required for ajax tables to auto-init. Exclude this if you wish to init manually with custom settings (see below). |
-| table id | Required only if you want to use automagic filtering (see below) |
 | th data-sort-column | Matches database column you'd like to sort against. |
+
+#### Filtering results
+
+You can optionally specify a form that will be bound to your table for simple table searching and reseting.
+
+````
+<form id="users-search">
+  <input class="ajax-table-search-input">
+  <a href="#" class="ajax-table-reset">x</a>
+  <input type="submit" value="Search">
+</form>
+````
+
+The `ajax-table-search-input` and `ajax-table-reset` class names are required. ALternatively, you can call search and reset manually (see Advanced Usage, below).
+
+#### Init that!
+
+````
+$(function() {
+  $('#users-table').ajaxTable({ searchForm: '#users-search' });
+});
+````
 
 #### Build your controller
 
@@ -84,7 +101,7 @@ def index
 end
 ````
 
-**Optional attributes**
+**Data attributes**
 
 | Attribute | Description |
 | --------- | ----------- |
@@ -110,38 +127,13 @@ end
 
 ### Advanced usage
 
-#### Filtering results
-
-Just as you can auto-init your tables by giving them a class of `ajax-table`, you can enable automagic filtering and resetting of your table contents by creating:
-
-* a form with class of `ajax-table-search` and data attribute of `ajax-table-id` that refers to your ajax table
-* an input field with class of `ajax-table-search-input`
-* a reset link with class `ajax-table-reset`
-
-Example:
-
-````
-<form class="ajax-table-search" data-ajax-table-id="users-table">
-  <input class="ajax-table-search-input">
-  <a href="#" class="ajax-table-reset">x</a>
-  <input type="submit" value="Search">
-</form>
-````
-
-The `search()` and `resetTable()` methods are public, so you're free to forego the simple automagic implementation and realize your wildest interface fantasies.
-
-````
-ajaxTable.search($('#some-table'), 'puppies');
-ajaxTable.resetTable($('#some-table'));
-````
-
-#### Customize your table
+#### Custom settings
 
 AjaxTableRails is built with Bootstrap and FontAwesome in mind, as well as some other defaults that may make you unhappy. You may want to override the classes used for pagination and sorting, as well as some other bits and bops. Here's what a full customization looks like (default values shown):
 
 ````
 $(function() {
-  ajaxTable.init($('#some-table'), {
+  $('#users-table').ajaxTable({
     cssClasses: {
       count: 'at-count',          // "Showing xx records out of xx" span
       pagination: 'pagination',   // Pagination ul, defaults to match Bootstrap
@@ -149,6 +141,7 @@ $(function() {
       sortAsc: 'fa fa-sort-up',   // Sort icon ascending indicator, defaults to use FontAwesome
       sortDesc: 'fa fa-sort-down' // Sort icon descending indicator, defaults to use FontAwesome
     },
+    searchForm: null,             // Form selector to be automatically bound for searching this table
     text: {
       count: 'Showing {count} records out of {total_count}', // Pass null to skip rendering of this element
       nextPage: '&raquo;',
@@ -156,6 +149,15 @@ $(function() {
     }
   });
 });
+````
+
+#### Custom search and reset
+
+The `search()` and `reset()` methods are public, so you're free to forego the simple automagic implementation and realize your wildest interface fantasies.
+
+````
+$('#users-table').ajaxTable('search', 'baby sloths');
+$('#users-table').ajaxTable('reset');
 ````
 
 #### Make it shiny

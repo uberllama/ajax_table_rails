@@ -144,7 +144,7 @@
             sortColumn:     'sort',
             sortDirection:  'direction'
           },
-          searchForm:       null, // Form selector to be automatically bound for searching this table
+          searchForm:       null,             // Form selector to be automatically bound for searching this table
           text: {
             count:          'Showing {count} records out of {total_count}', // To not display count, pass `text.count: null`
             nextPage:       '&raquo;',
