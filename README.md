@@ -115,7 +115,8 @@ You need to render two JSON nodes: `rows` for your records, and `pagination` for
 
 ````
 json.rows(@users) do |user|
-  json.extract!(user, :name, :email)
+  json.name h(user.name)
+  json.email h(user.email)
   json.action link_to("Edit", edit_user_path(user), class: "btn")
 end
 json.pagination do
@@ -124,6 +125,8 @@ json.pagination do
   json.total_count @total_count
 end
 ````
+
+**Note:** AjaxTableRails will pass through any HTML you submit, so remember to `h` or `sanitize` that user-generated content.
 
 ### Advanced usage
 
