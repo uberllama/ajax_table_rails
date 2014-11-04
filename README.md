@@ -1,3 +1,5 @@
+Note: This was a fun little project, but is no longer maintained.
+
 # AjaxTableRails
 
 AjaxTableRails is a super simple, super lightweight library if all you want is fast, JSON-loaded tables with ajax sorting, pagination, and filtering. It provides just enough to get you going and doesn't do anything fancy. It is also still very much in early development, so there are probably bugs.
